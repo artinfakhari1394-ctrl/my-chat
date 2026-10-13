@@ -1,122 +1,232 @@
--- =========================================
--- CHAT APP DATABASE - COMPLETE SQL
--- =========================================
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Chat</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#d9dbd5;direction:rtl;color:#17212b}button,input{font:inherit}#authPage{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:18px}.auth-box{width:100%;max-width:390px;background:#fff;padding:28px;border-radius:18px;box-shadow:0 12px 36px #00000018;text-align:center}.auth-box h1{color:#075e54;margin:0 0 10px}.auth-subtitle{color:#687780;font-size:13px;margin-bottom:22px}.auth-box input{width:100%;padding:13px;margin-bottom:11px;border:1px solid #d8dfdc;border-radius:10px;font-size:15px;direction:rtl;outline:none}.auth-box input:focus{border-color:#25a56a;box-shadow:0 0 0 3px #25d36620}.auth-box button{width:100%;padding:13px;border:0;border-radius:10px;background:#128c7e;color:white;font-size:16px;cursor:pointer;margin-top:4px}.auth-box button:disabled,.send-button:disabled{opacity:.6;cursor:wait}.switch{margin-top:18px;color:#087e70;cursor:pointer;font-size:14px}#result{margin-top:14px;font-size:13px;line-height:1.8;overflow-wrap:anywhere}.small-note{font-size:11px;color:#7b858d;margin-top:14px;line-height:1.8}#chatPage{display:none;width:100%;max-width:1100px;height:100dvh;min-height:500px;margin:auto;background:white;box-shadow:0 0 28px #00000012}.app{display:flex;height:100%;min-height:0}.sidebar{width:32%;min-width:220px;background:#f0f2f5;border-left:1px solid #ddd;display:flex;flex-direction:column}.sidebar-header{background:#075e54;color:white;padding:18px;font-size:20px;font-weight:bold}.welcome{padding:13px;background:#f0f2f5;font-size:13px;color:#35434b;border-bottom:1px solid #e2e6e8}.contact-search{padding:10px;background:#f0f2f5;border-bottom:1px solid #e2e6e8}.contact-search input{width:100%;border:1px solid #dce2e5;border-radius:9px;padding:10px 12px;outline:none;background:#fff;font-size:13px}.contact-search input:focus{border-color:#25a56a}.contacts{overflow-y:auto;flex:1}.contact{padding:16px;background:white;border-bottom:1px solid #eee;cursor:pointer;font-size:15px;overflow-wrap:anywhere}.contact:hover,.contact.active{background:#e5f6ef}.contact small{display:block;color:#7b858d;font-size:11px;margin-top:5px}.logout{margin:10px;padding:10px;border:0;border-radius:9px;background:#e74c3c;color:white;cursor:pointer}.chat{flex:1;min-width:0;display:flex;flex-direction:column}.chat-header{background:#075e54;color:white;padding:14px 17px;font-size:17px}.status{font-size:11px;color:#d7f8ef;margin-top:5px}.messages{flex:1;padding:18px;overflow-y:auto;background:#efeae2;display:flex;flex-direction:column;gap:9px}.message{width:fit-content;max-width:82%;padding:10px 13px;border-radius:12px 12px 3px 12px;background:white;box-shadow:0 1px 1px #0000000b;overflow-wrap:anywhere;white-space:pre-wrap}.message.me{margin-right:auto;background:#d9fdd3;border-radius:12px 12px 12px 3px}.message-time{display:block;font-size:10px;color:#728078;margin-top:5px;text-align:left}.empty-state{margin:auto;text-align:center;color:#718078;line-height:2;font-size:14px}.input-area{display:flex;gap:9px;padding:11px;background:#f0f2f5;border-top:1px solid #e1e5e6}.input-area input{flex:1;min-width:0;border:0;outline:none;border-radius:22px;padding:13px 16px;font-size:14px}.send-button{width:48px;height:48px;flex-shrink:0;border:0;border-radius:50%;background:#25d366;color:white;font-size:21px;cursor:pointer}.no-contacts{padding:16px;color:#748078;font-size:13px;line-height:1.8}@media(max-width:650px){#chatPage{height:100dvh;min-height:0}.sidebar{width:37%;min-width:125px}.sidebar-header{padding:14px;font-size:17px}.welcome{padding:10px;font-size:12px}.contact{padding:13px 10px;font-size:13px}.chat-header{padding:13px;font-size:15px}.messages{padding:12px}.message{max-width:92%}.input-area{padding:8px}.send-button{width:44px;height:44px}}@media(max-width:380px){.sidebar{width:34%;min-width:110px}.contact{font-size:12px}.sidebar-header{font-size:15px}}
+</style>
+</head>
+<body>
+<div id="authPage">
+  <div class="auth-box">
+    <h1 id="authTitle">ورود به My Chat</h1>
+    <div class="auth-subtitle">پیام‌رسان دوستانت، روی همه دستگاه‌ها</div>
+    <input type="text" id="name" placeholder="نام نمایشی" autocomplete="name" style="display:none">
+    <input type="text" id="username" placeholder="نام کاربری (۳ تا ۲۰ حرف انگلیسی، عدد یا _)" autocomplete="username" style="display:none">
+    <input type="email" id="email" placeholder="ایمیل" autocomplete="email" dir="ltr">
+    <input type="password" id="password" placeholder="رمز عبور (حداقل ۶ کاراکتر)" autocomplete="current-password">
+    <input type="password" id="confirmPassword" placeholder="تکرار رمز عبور" autocomplete="new-password" style="display:none">
+    <button id="mainButton" onclick="mainAction()">ورود</button>
+    <div id="switchButton" class="switch" onclick="showRegister()">حساب نداری؟ ثبت‌نام کن</div>
+    <div id="result" role="status" aria-live="polite"></div>
+    <div class="small-note">برای استفاده روی چند گوشی، همه باید با حساب خودشان ثبت‌نام کنند.</div>
+  </div>
+</div>
+<div id="chatPage">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">💬 My Chat</div>
+      <div id="welcomeUser" class="welcome"></div>
+      <div class="contact-search"><input id="contactSearch" type="search" placeholder="جست‌وجوی مخاطب…" aria-label="جست‌وجوی مخاطب"></div>
+      <div id="contacts" class="contacts"><div class="no-contacts">در حال دریافت کاربران…</div></div>
+      <button class="logout" onclick="logout()">خروج از حساب</button>
+    </aside>
+    <main class="chat">
+      <div class="chat-header"><div id="chatName">یک مخاطب انتخاب کن</div><div class="status" id="chatStatus">پیام‌ها بین دستگاه‌ها همگام می‌شوند</div></div>
+      <div class="messages" id="messages"><div class="empty-state">از فهرست کنار صفحه یک مخاطب انتخاب کن.</div></div>
+      <div class="input-area"><input id="messageInput" type="text" maxlength="4000" placeholder="پیامت را بنویس…" onkeydown="handleKey(event)" disabled><button id="sendButton" class="send-button" onclick="sendMessage()" aria-label="ارسال پیام" disabled>➤</button></div>
+    </main>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Public project settings. Never put a Supabase secret/service_role key in browser code.
+const SUPABASE_URL = 'https://dpdsrnrgrudchhqwpvwy.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_2D1CXcyd0hMnrM1K0AI7tw_wg7qyuAI';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let currentUser = null;
+let currentProfile = null;
+let currentChatUser = null;
+let messageChannel = null;
+let contactsCache = [];
+let isRegisterMode = false;
+let refreshTimer = null;
+let loadingMessages = false;
+const $ = id => document.getElementById(id);
 
--- 1. Create profiles table
-CREATE TABLE IF NOT EXISTS public.profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    username TEXT NOT NULL UNIQUE
-        CHECK (username ~ '^[A-Za-z0-9_]{3,20}$'),
-    display_name TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+function showResult(message, color = '#b42318') { $('result').textContent = message; $('result').style.color = color; }
+function friendlyError(error) {
+  const msg = String(error?.message || error || 'خطای ناشناخته');
+  if (/Invalid login credentials/i.test(msg)) return 'ایمیل یا رمز عبور اشتباه است.';
+  if (/already registered|User already registered/i.test(msg)) return 'این ایمیل قبلاً ثبت‌نام کرده است؛ وارد حساب شو.';
+  if (/duplicate key|profiles_username_key|username/i.test(msg) && /unique|duplicate|already|profiles_username_key/i.test(msg)) return 'این نام کاربری قبلاً انتخاب شده است.';
+  if (/Failed to fetch|NetworkError/i.test(msg)) return 'اتصال اینترنت را بررسی کن و دوباره تلاش کن.';
+  return msg;
+}
+function setBusy(busy) { $('mainButton').disabled = busy; $('mainButton').textContent = busy ? 'لطفاً صبر کن…' : (isRegisterMode ? 'ثبت‌نام' : 'ورود'); }
+function showRegister() {
+  isRegisterMode = true;
+  $('authTitle').textContent = 'ثبت‌نام در My Chat';
+  $('name').style.display = 'block'; $('username').style.display = 'block'; $('confirmPassword').style.display = 'block';
+  $('password').autocomplete = 'new-password'; $('mainButton').textContent = 'ثبت‌نام';
+  $('switchButton').textContent = 'قبلاً حساب داری؟ ورود'; $('switchButton').onclick = showLogin;
+  $('result').textContent = '';
+}
+function showLogin() {
+  isRegisterMode = false;
+  $('authTitle').textContent = 'ورود به My Chat';
+  $('name').style.display = 'none'; $('username').style.display = 'none'; $('confirmPassword').style.display = 'none';
+  $('password').autocomplete = 'current-password'; $('mainButton').textContent = 'ورود';
+  $('switchButton').textContent = 'حساب نداری؟ ثبت‌نام کن'; $('switchButton').onclick = showRegister;
+  $('result').textContent = '';
+}
+async function mainAction() {
+  const email = $('email').value.trim().toLowerCase();
+  const password = $('password').value;
+  if (!email || !password) return showResult('ایمیل و رمز عبور را وارد کن.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showResult('ایمیل را درست وارد کن.');
+  if (password.length < 6) return showResult('رمز عبور باید حداقل ۶ کاراکتر باشد.');
+  setBusy(true);
+  try {
+    if (isRegisterMode) {
+      const name = $('name').value.trim();
+      const username = $('username').value.trim();
+      const confirmPassword = $('confirmPassword').value;
+      if (!name || !username || !confirmPassword) return showResult('همه قسمت‌ها را پر کن.');
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) return showResult('نام کاربری باید ۳ تا ۲۰ کاراکتر انگلیسی، عدد یا زیرخط (_) باشد.');
+      if (password !== confirmPassword) return showResult('رمز عبور و تکرار آن یکسان نیست.');
+      const { data, error } = await supabaseClient.auth.signUp({ email, password, options: { data: { username, display_name: name } } });
+      if (error) throw error;
+      if (data.session) {
+        showResult('ثبت‌نام انجام شد؛ در حال ورود…', '#087443');
+        await loadApp(data.user);
+      } else {
+        showResult('ثبت‌نام انجام شد. اگر تأیید ایمیل فعال است، ایمیلت را باز کن و لینک تأیید را بزن؛ سپس با ایمیل و رمز وارد شو.', '#087443');
+        $('password').value = ''; $('confirmPassword').value = '';
+        showLogin();
+        showResult('ثبت‌نام انجام شد. ایمیلت را برای لینک تأیید بررسی کن؛ سپس وارد شو.', '#087443');
+      }
+    } else {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      await loadApp(data.user);
+    }
+  } catch (error) {
+    const msg = String(error?.message || 'خطای ناشناخته');
+    if (/Database error saving new user|trigger/i.test(msg)) showResult('ثبت‌نام در پایگاه داده کامل نشد. تریگر ساخت پروفایل را در Supabase بررسی کن.');
+    else showResult(friendlyError(msg));
+  } finally { setBusy(false); }
+}
+async function loadApp(user) {
+  currentUser = user;
+  const { data: profile, error } = await supabaseClient.from('profiles').select('id, username, display_name').eq('id', user.id).maybeSingle();
+  if (error) throw error;
+  if (!profile) { await supabaseClient.auth.signOut(); currentUser = null; throw new Error('پروفایل کاربر ساخته نشده؛ دستور SQL تکمیلی را در Supabase اجرا کن.'); }
+  currentProfile = profile;
+  $('authPage').style.display = 'none'; $('chatPage').style.display = 'block';
+  $('welcomeUser').textContent = 'سلام ' + (profile.display_name || profile.username) + ' 👋';
+  $('messageInput').disabled = true; $('sendButton').disabled = true;
+  await loadContacts();
+  subscribeToMessages();
+  if (refreshTimer) clearInterval(refreshTimer);
+  // Polling fallback: message sync still works if Realtime is not enabled in Supabase.
+  refreshTimer = setInterval(async () => {
+    if (!currentUser) return;
+    await loadContacts().catch(() => {});
+    if (currentChatUser) await loadMessages();
+  }, 4000);
+}
+async function loadContacts() {
+  const { data, error } = await supabaseClient.from('profiles').select('id, username, display_name').neq('id', currentUser.id).order('username');
+  if (error) throw error;
+  contactsCache = data || [];
+  const root = $('contacts'); root.replaceChildren();
+  const search = ($('contactSearch')?.value || '').trim().toLocaleLowerCase();
+  const visibleContacts = contactsCache.filter(profile => ((profile.display_name || '') + ' ' + profile.username).toLocaleLowerCase().includes(search));
+  if (!contactsCache.length) {
+    const empty = document.createElement('div'); empty.className = 'no-contacts'; empty.textContent = 'هنوز کاربر دیگری ثبت‌نام نکرده است. دوستانت هم باید در همین سایت حساب بسازند.'; root.appendChild(empty); return;
+  }
+  if (!visibleContacts.length) { const empty = document.createElement('div'); empty.className = 'no-contacts'; empty.textContent = 'مخاطبی با این عبارت پیدا نشد.'; root.appendChild(empty); return; }
+  visibleContacts.forEach(profile => {
+    const item = document.createElement('div'); item.className = 'contact' + (currentChatUser?.id === profile.id ? ' active' : '');
+    const title = document.createElement('div'); title.textContent = '👤 ' + (profile.display_name || profile.username);
+    const sub = document.createElement('small'); sub.textContent = '@' + profile.username;
+    item.append(title, sub); item.onclick = () => openChat(profile); root.appendChild(item);
+  });
+}
+async function openChat(profile) {
+  currentChatUser = profile;
+  $('chatName').textContent = '👤 ' + (profile.display_name || profile.username);
+  $('chatStatus').textContent = '@' + profile.username;
+  $('messageInput').disabled = false; $('sendButton').disabled = false;
+  await loadContacts();
+  await loadMessages();
+  $('messageInput').focus();
+}
+async function loadMessages() {
+  if (!currentChatUser || !currentUser || loadingMessages) return;
+  loadingMessages = true;
+  const { data, error } = await supabaseClient.from('messages').select('id, sender_id, recipient_id, content, created_at').or(`sender_id.eq.${currentUser.id},recipient_id.eq.${currentUser.id}`).order('created_at', { ascending: true }).limit(1000);
+  if (error) { showChatError('پیام‌ها دریافت نشدند: ' + friendlyError(error)); loadingMessages = false; return; }
+  const pairMessages = (data || []).filter(m => (m.sender_id === currentUser.id && m.recipient_id === currentChatUser.id) || (m.sender_id === currentChatUser.id && m.recipient_id === currentUser.id));
+  renderMessages(pairMessages);
+  loadingMessages = false;
+}
+function renderMessages(list) {
+  const root = $('messages'); root.replaceChildren();
+  if (!list.length) { const empty = document.createElement('div'); empty.className = 'empty-state'; empty.textContent = 'هنوز پیامی ردوبدل نشده؛ اولین پیام را بفرست!'; root.appendChild(empty); return; }
+  list.forEach(m => {
+    const bubble = document.createElement('div'); bubble.className = 'message' + (m.sender_id === currentUser.id ? ' me' : '');
+    const body = document.createElement('div'); body.textContent = m.content;
+    const time = document.createElement('span'); time.className = 'message-time';
+    time.textContent = new Date(m.created_at).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+    bubble.append(body, time); root.appendChild(bubble);
+  });
+  root.scrollTop = root.scrollHeight;
+}
+function showChatError(text) { $('messages').replaceChildren(); const e = document.createElement('div'); e.className = 'empty-state'; e.textContent = text; $('messages').appendChild(e); }
+async function sendMessage() {
+  const input = $('messageInput'); const content = input.value.trim();
+  if (!content || !currentChatUser || !currentUser) return;
+  $('sendButton').disabled = true;
+  try {
+    const { error } = await supabaseClient.from('messages').insert({ sender_id: currentUser.id, recipient_id: currentChatUser.id, content });
+    if (error) throw error;
+    input.value = ''; await loadMessages(); input.focus();
+  } catch (error) { alert('پیام ارسال نشد: ' + friendlyError(error)); }
+  finally { $('sendButton').disabled = !currentChatUser; }
+}
+function subscribeToMessages() {
+  if (messageChannel) supabaseClient.removeChannel(messageChannel);
+  messageChannel = supabaseClient.channel('messages-' + currentUser.id)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+      const m = payload.new;
+      if (m.sender_id === currentUser.id || m.recipient_id === currentUser.id) {
+        if (currentChatUser && (m.sender_id === currentChatUser.id || m.recipient_id === currentChatUser.id)) loadMessages();
+      }
+    })
+    .subscribe();
+}
+function handleKey(event) { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); } }
+async function logout() {
+  if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
+  if (messageChannel) { await supabaseClient.removeChannel(messageChannel); messageChannel = null; }
+  await supabaseClient.auth.signOut(); currentUser = null; currentProfile = null; currentChatUser = null; contactsCache = [];
+  $('chatPage').style.display = 'none'; $('authPage').style.display = 'flex'; $('email').value = ''; $('password').value = ''; $('messageInput').value = ''; $('contactSearch').value = ''; showLogin();
+}
+$('contactSearch').addEventListener('input', () => { loadContacts().catch(e => showChatError('فهرست مخاطبان دریافت نشد: ' + friendlyError(e))); });
+$('email').addEventListener('keydown', e => { if (e.key === 'Enter') mainAction(); });
+$('password').addEventListener('keydown', e => { if (e.key === 'Enter') mainAction(); });
+$('confirmPassword').addEventListener('keydown', e => { if (e.key === 'Enter') mainAction(); });
 
--- 2. Create messages table
-CREATE TABLE IF NOT EXISTS public.messages (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    sender_id UUID NOT NULL
-        REFERENCES public.profiles(id) ON DELETE CASCADE,
-    recipient_id UUID NOT NULL
-        REFERENCES public.profiles(id) ON DELETE CASCADE,
-    content TEXT NOT NULL
-        CHECK (CHAR_LENGTH(content) BETWEEN 1 AND 4000),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT different_users CHECK (sender_id <> recipient_id)
-);
-
--- 3. Enable Row Level Security
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
-
--- 4. Remove old policies if they already exist
-DROP POLICY IF EXISTS "Authenticated users can view profiles"
-    ON public.profiles;
-
-DROP POLICY IF EXISTS "Users can read their own conversations"
-    ON public.messages;
-
-DROP POLICY IF EXISTS "Users can send messages as themselves"
-    ON public.messages;
-
--- 5. Allow logged-in users to view profiles
-CREATE POLICY "Authenticated users can view profiles"
-ON public.profiles
-FOR SELECT
-TO authenticated
-USING (TRUE);
-
--- 6. Allow users to read messages they sent or received
-CREATE POLICY "Users can read their own conversations"
-ON public.messages
-FOR SELECT
-TO authenticated
-USING (
-    auth.uid() = sender_id
-    OR auth.uid() = recipient_id
-);
-
--- 7. Allow users to send messages as themselves
-CREATE POLICY "Users can send messages as themselves"
-ON public.messages
-FOR INSERT
-TO authenticated
-WITH CHECK (
-    auth.uid() = sender_id
-    AND EXISTS (
-        SELECT 1
-        FROM public.profiles AS p
-        WHERE p.id = recipient_id
-    )
-);
-
--- 8. Create automatic profile registration function
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = ''
-AS $$
-BEGIN
-    INSERT INTO public.profiles (
-        id,
-        username,
-        display_name
-    )
-    VALUES (
-        NEW.id,
-        NEW.raw_user_meta_data ->> 'username',
-        NEW.raw_user_meta_data ->> 'display_name'
-    );
-
-    RETURN NEW;
-END;
-$$;
-
--- 9. Recreate registration trigger
-DROP TRIGGER IF EXISTS on_auth_user_created
-ON auth.users;
-
-CREATE TRIGGER on_auth_user_created
-AFTER INSERT ON auth.users
-FOR EACH ROW
-EXECUTE FUNCTION public.handle_new_user();
-
--- 10. Grant required permissions
-GRANT SELECT ON public.profiles TO authenticated;
-GRANT SELECT, INSERT ON public.messages TO authenticated;
-GRANT USAGE, SELECT ON SEQUENCE public.messages_id_seq
-TO authenticated;
-
--- 11. Create indexes for faster message loading
-CREATE INDEX IF NOT EXISTS idx_messages_sender_recipient
-ON public.messages (sender_id, recipient_id, created_at);
-
-CREATE INDEX IF NOT EXISTS idx_messages_recipient_sender
-ON public.messages (recipient_id, sender_id, created_at);
-
-CREATE INDEX IF NOT EXISTS idx_profiles_username
-ON public.profiles (username);
-
--- =========================================
--- DONE
--- =========================================
+(async function init() {
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session?.user) await loadApp(session.user);
+  } catch (e) { showResult('اتصال اولیه کامل نشد: ' + (e.message || 'خطای ناشناخته')); }
+})();
+</script>
+</body>
+</html>
